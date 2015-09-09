@@ -169,6 +169,22 @@
     };
   }
 
+  function emptySet() {
+    return {
+      includes: function(element) {
+        return false;
+      }
+    }
+  }
+
+  function allSet() {
+    return {
+      includes: function(element) {
+        return true;
+      }
+    }
+  }
+
   function map(array, fn) {
     var rets = [];
     for(var i=0; i < array.length; i++) {
@@ -341,10 +357,23 @@
     return user ? user.uid : null;
   }
 
-  function trackInteraction(eventName, elements, properties) {
-    var tagset = set(map(elements, function(tag) {
+  function tagSet(elements) {
+    if(typeof elements === "undefined") {
+      return emptySet();
+    }
+
+    if (elements === "*" ) {
+      return allSet();
+    }
+
+    return set(map(elements, function(tag) {
       return tag.toLowerCase();
-    }));
+    }))
+  }
+
+  function trackInteraction(eventName, elements, excludeElements) {
+    var includes = tagSet(elements);
+    var excludes = tagSet(excludeElements);
 
     document.addEventListener(eventName, function(event) {
       var element = eventExtractSrcElement(event);
@@ -352,7 +381,8 @@
       var path = elementPath(element);
       for(var i=0; i < path.length; i++) {
         var element = path[i];
-        if(tagset.includes(element.tagName.toLowerCase())) {
+        var tagname = element.tagName.toLowerCase();
+        if(includes.includes(tagname) && !excludes.includes(tagname)) {
           var label = elementGetAttr(element, "analytics-label");
           if(label) {
             var event = eventName + "|" + label + "|" + elementRole(element);
@@ -393,6 +423,9 @@
       window.jtr = _jtr;
     }
   };
+
+  trackInteraction("click", "*", ["form"]);
+  trackInteraction("submit", ["form"]);
 
   // processing events left from previous page
   sendEvents();
