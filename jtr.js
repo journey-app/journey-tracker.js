@@ -324,18 +324,34 @@
     props.url = window.location.href;
     props.referrer = document.referrer;
     props.title = document.title;
-    pushEvent({'type': 'page',
-               'name': "open|" + name + "|page",
-               'properties': props,
-              });
+    var event = {'type': 'page',
+                 'name': "open|" + name + "|page",
+                 'properties': props,
+                };
+    pushEvent(event);
+    sendInPageAnalyticsTrackEvent(event);
   }
 
+  function sendInPageAnalyticsTrackEvent(event) {
+    var tail = store.getItem("jtr_tracking_tail") || [];
+    tail.unshift(event)
+    while (tail.length > 2) {
+      tail.pop();
+    }
+    store.setItem("jtr_tracking_tail", tail);
+    var ifr = document.getElementById("_jtr_in_page_analytics");
+    if(ifr && ifr.contentWindow && ifr.contentWindow.postMessage) {
+      ifr.contentWindow.postMessage(JSON.stringify(tail), "*");
+    }
+  }
 
   function track(action, properties, options) {
-    pushEvent({'type': 'track',
-               'name': action,
-               'properties': properties,
-              });
+    var event = {'type': 'track',
+                 'name': action,
+                 'properties': properties,
+                };
+    pushEvent(event);
+    sendInPageAnalyticsTrackEvent(event);
   }
 
   function identify(userId, traits, options) {
@@ -358,7 +374,7 @@
   }
 
   function tagSet(elements) {
-    if(typeof elements === "undefined") {
+    if(typeof elements === "undefined" || elements === null) {
       return emptySet();
     }
 
@@ -371,9 +387,10 @@
     }))
   }
 
-  function trackInteraction(eventName, elements, excludeElements) {
+  function trackInteraction(eventName, elements, excludeElements, preventRepeative) {
     var includes = tagSet(elements);
     var excludes = tagSet(excludeElements);
+    var lastTriggerElement;
 
     document.addEventListener(eventName, function(event) {
       var element = eventExtractSrcElement(event);
@@ -385,6 +402,10 @@
         if(includes.includes(tagname) && !excludes.includes(tagname)) {
           var label = elementGetAttr(element, "analytics-label");
           if(label) {
+            if(preventRepeative && lastTriggerElement === element) {
+              break;
+            }
+            lastTriggerElement = element;
             var event = eventName + "|" + label + "|" + elementRole(element);
             track(event, {
               '_locator': elementGetLocationDescriptor(element)
@@ -406,8 +427,30 @@
       return "link";
     }
 
-    if (tag === "input" && elementGetAttr(element, "type") === "submit") {
-      return "button";
+    if (tag === "textarea") {
+      return "textbox";
+    }
+
+
+    if (tag === "input") {
+      var type = elementGetAttr(element, "type");
+      if(type === "submit") {
+        return "button";
+      }
+
+      if(type === "checkbox") {
+        return "checkbox";
+      }
+
+      if(type === "radio") {
+        return "radio";
+      }
+
+      if(type === "file") {
+        return "file upload";  //not a standard arial role
+      }
+
+      return "textbox";
     }
 
     return tag;
@@ -426,6 +469,7 @@
 
   trackInteraction("click", "*", ["form"]);
   trackInteraction("submit", ["form"]);
+  trackInteraction("keypress", ["input"], null, true);
 
   // processing events left from previous page
   sendEvents();
