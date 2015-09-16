@@ -316,6 +316,7 @@
     var queue = store.getItem("jtr_q") || [];
     queue.push(event);
     store.setItem("jtr_q", queue);
+    sendInPageAnalyticsTrackEvent(event);
     sendEvents();
   }
 
@@ -324,15 +325,18 @@
     props.url = window.location.href;
     props.referrer = document.referrer;
     props.title = document.title;
-    var event = {'type': 'page',
-                 'name': "open|" + name + "|page",
-                 'properties': props,
-                };
+    var event = {
+      'type': 'page',
+      'name': "open|" + name + "|page",
+      'properties': props,
+    };
     pushEvent(event);
-    sendInPageAnalyticsTrackEvent(event);
   }
 
   function sendInPageAnalyticsTrackEvent(event) {
+    if(event.type === "identify") {
+      return;
+    }
     var tail = store.getItem("jtr_tracking_tail") || [];
     tail.unshift(event)
     while (tail.length > 2) {
@@ -351,7 +355,6 @@
                  'properties': properties,
                 };
     pushEvent(event);
-    sendInPageAnalyticsTrackEvent(event);
   }
 
   function identify(userId, traits, options) {
