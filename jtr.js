@@ -127,17 +127,12 @@
   }
 
   var _jtr = window.jtr || [];
-  var deviceToken = getCurrentScriptElement().getAttribute("data-jtr-device-token");
+  var deviceToken = document.documentElement.getAttribute("data-jtr-device-token");
   var console = window.console || {
     log: function() {}
   };
   var store = jsonStore(window.localStorage || cookieStorage('jtr_session'));
-  var eventsRemoteUrl = getCurrentScriptElement().getAttribute("data-jtr-events-url") || "https://www.journey-app.io/events";
-
-  function getCurrentScriptElement() {
-    // todo: hanlding IE
-    return document.currentScript;
-  }
+  var eventsRemoteUrl = document.documentElement.getAttribute("data-jtr-events-url") || "https://www.journey-app.io/events";
 
   function K(a) {
     return a;
@@ -288,11 +283,9 @@
       http = new ActiveXObject("Microsoft.XMLHTTP");
     }
 
-
     http.open("POST", eventsRemoteUrl, true);
-    http.setRequestHeader("Content-Type", "application/json");
-    http.setRequestHeader("Journey-Device-Token", deviceToken);
-    http.send(JSON.stringify({'events': events}));
+    http.setRequestHeader("Content-Type", "text/plain");
+    http.send(JSON.stringify({'events': events, 'token': deviceToken}));
     http.onreadystatechange = function() {
       if (4 == http.readyState) {
         if ( 200 != http.status ) {
@@ -320,8 +313,38 @@
     sendEvents();
   }
 
+  function getCanonicalUrl() {
+    var links = document.getElementsByTagName("link");
+    for (var i = 0; i < links.length; i ++) {
+      if (links[i].getAttribute("rel") === "canonical") {
+        return links[i].getAttribute("href")
+      }
+    }
+  }
+
+  function parseUrl(url) {
+    var match = url.match(/^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)(\/[^?#]*)(\?[^#]*|)(#.*|)$/);
+    return match && {
+      protocol: match[1],
+      host: match[2],
+      hostname: match[3],
+      port: match[4],
+      pathname: match[5],
+      search: match[6],
+      hash: match[7]
+    };
+  }
+
+  function inferPageName() {
+    var url = getCanonicalUrl() || window.location.href;
+    return parseUrl(url).pathname;
+  }
+
   function page(name, properties, options) {
     var props = clone(properties) || {};
+    if (!name) {
+      name = inferPageName();
+    }
     props.url = window.location.href;
     props.referrer = document.referrer;
     props.title = document.title;

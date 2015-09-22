@@ -1,0 +1,65 @@
+<script type="text/javascript">
+  (function(){
+    // Create a queue, but don't obliterate an existing one!
+    var jtr = window.jtr = window.jtr || [];
+
+    // If the real analytics.js is already on the page return.
+    if (jtr.initialize) return;
+
+    // If the snippet was invoked already show an error.
+    if (jtr.invoked) {
+      if (window.console && console.error) {
+        console.error('Journey tracking snippet included twice.');
+      }
+      return;
+    }
+
+    // is never invoked twice.
+    jtr.invoked = true;
+
+    // A list of the methods in Analytics.js to stub.
+    jtr.methods = [
+      'page',
+      'identify',
+      'track',
+      'trackInteraction',
+      'noConflict'
+    ];
+
+    // Define a factory to create stubs. These are placeholders
+    // for methods in Analytics.js so that you never have to wait
+    // for it to load to actually record data. The `method` is
+    // stored as the first argument, so we can replay the data.
+    jtr.factory = function(method){
+      return function(){
+        var args = Array.prototype.slice.call(arguments);
+        args.unshift(method);
+        jtr.push(args);
+        return jtr;
+      };
+    };
+
+    // For each of our methods, generate a queueing stub.
+    for (var i = 0; i < jtr.methods.length; i++) {
+      var key = jtr.methods[i];
+      jtr[key] = jtr.factory(key);
+    }
+
+    // Define a method to load Analytics.js from our CDN,
+    // and that will be sure to only ever load it once.
+    jtr.load = function(key){
+      // Create an async script element based on your key.
+      var html = document.documentElement;
+      html.setAttribute('data-jtr-device-token', key);
+      var script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.async = true;
+      script.src = 'https://s3.amazonaws.com/cdn.journey-app.io/js/jtr-v1.0.js';
+      // Insert our script next to the first script element.
+      var first = document.getElementsByTagName('script')[0];
+      first.parentNode.insertBefore(script, first);
+    };
+    jtr.load("{{ site.journey_token }}");
+    jtr.page();
+  })();
+</script>
