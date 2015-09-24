@@ -283,9 +283,11 @@
       http = new ActiveXObject("Microsoft.XMLHTTP");
     }
 
+    var body = "token="+encodeURIComponent(deviceToken)
+      +"&events="+encodeURIComponent(JSON.stringify(events));
     http.open("POST", eventsRemoteUrl, true);
-    http.setRequestHeader("Content-Type", "text/plain");
-    http.send(JSON.stringify({'events': events, 'token': deviceToken}));
+    http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    http.send(body);
     http.onreadystatechange = function() {
       if (4 == http.readyState) {
         if ( 200 != http.status ) {
