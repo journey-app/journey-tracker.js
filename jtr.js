@@ -290,7 +290,7 @@
     http.send(body);
     http.onreadystatechange = function() {
       if (4 == http.readyState) {
-        if ( 200 != http.status ) {
+        if ( 200 != http.status && 201 != http.status ) {
           console.log("jtr warning: can not send event, http code: " + http.status)
           clearEvents(filter(events, function(event) {
             return event.type === "track";
