@@ -132,7 +132,7 @@
     log: function() {}
   };
   var store = jsonStore(window.localStorage || cookieStorage('jtr_session'));
-  var eventsRemoteUrl = document.documentElement.getAttribute("data-jtr-events-url") || "https://www.journey-app.io/events";
+  var eventsRemoteUrl = document.documentElement.getAttribute("data-jtr-events-url") || "https://event-stream.journey-app.io/events";
 
   function K(a) {
     return a;
