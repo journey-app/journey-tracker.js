@@ -58,7 +58,7 @@ lint: node_modules
 .PHONY: lint
 
 
-deploy: lint clean journey-tracker.min.js
+deploy: clean lint journey-tracker.min.js
 	@aws s3 cp journey-tracker.min.js s3://cdn.journey-app.io/v1/journey-tracker.min.js
 
 .PHONY: deploy
