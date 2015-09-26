@@ -1,0 +1,4 @@
+/node_modules/*
+/journey-tracker.js
+/journey-tracker.min.js
+/components/*
