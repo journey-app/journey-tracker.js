@@ -24,7 +24,7 @@ node_modules: package.json $(wildcard node_modules/*/package.json)
 
 # Remove temporary/built files.
 clean:
-	rm -rf *.log journey-tracker.js journey-tracker.min.js
+	rm -rf *.log journey-tracker.js journey-tracker.min.js journey-tracker.min.js.gz
 .PHONY: clean
 
 # Remove temporary/built files and vendor dependencies.
@@ -44,8 +44,13 @@ journey-tracker.js: node_modules $(SRC) package.json
 journey-tracker.min.js: journey-tracker.js
 	@$(UGLIFYJS) $< --output $@
 
+
+# gzip it
+journey-tracker.min.js.gz: journey-tracker.min.js
+	@gzip < journey-tracker.min.js > journey-tracker.min.js.gz
+
 # Build shortcut.
-build: journey-tracker.min.js
+build: journey-tracker.min.js.gz
 .PHONY: build
 
 #
@@ -58,7 +63,7 @@ lint: node_modules
 .PHONY: lint
 
 
-deploy: clean lint journey-tracker.min.js
-	@aws s3 cp journey-tracker.min.js s3://cdn.journey-app.io/v1/journey-tracker.min.js --cache-control "public, max-age=7200"
+deploy: clean lint build
+	@aws s3 cp journey-tracker.min.js.gz s3://cdn.journey-app.io/v1/journey-tracker.min.js --cache-control "public, max-age=7200" --content-encoding "gzip"
 
 .PHONY: deploy
