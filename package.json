@@ -21,10 +21,13 @@
   "scripts": {
     "test": "make test"
   },
-  "dependencies": {},
+  "dependencies": {
+    "has-cors": "^1.1.0",
+    "jsonp": "^0.2.0"
+  },
   "devDependencies": {
-    "duo": "^0.12.0",
     "eslint": "0.x",
-    "uglify-js": ">= 1.3.4"
+    "uglify-js": ">= 1.3.4",
+    "browserify": "^11.2.0"
   }
 }

@@ -2,9 +2,9 @@
 # Binaries.
 #
 
-DUO = node_modules/.bin/duo
 ESLINT = node_modules/.bin/eslint
 UGLIFYJS = node_modules/.bin/uglifyjs
+BROWSERIFY = node_modules/.bin/browserify
 
 
 #
@@ -29,7 +29,7 @@ clean:
 
 # Remove temporary/built files and vendor dependencies.
 distclean: clean
-	rm -rf components node_modules
+	rm -rf node_modules
 .PHONY: distclean
 
 #
@@ -38,7 +38,7 @@ distclean: clean
 
 # Build journey-tracker.js.
 journey-tracker.js: node_modules $(SRC) package.json
-	@$(DUO) --stdout --standalone journey-tracker lib/index.js > $@
+	@$(BROWSERIFY) --standalone jtr lib/index.js > $@
 
 # Build minified js.
 journey-tracker.min.js: journey-tracker.js
