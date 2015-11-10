@@ -1,7 +1,7 @@
 #
 # Binaries.
 #
-
+VERSION=1.0.0
 ESLINT = node_modules/.bin/eslint
 UGLIFYJS = node_modules/.bin/uglifyjs
 BROWSERIFY = node_modules/.bin/browserify
@@ -81,6 +81,6 @@ watchify: node_modules $(SRC) package.json
 .PHONY: watchify
 
 deploy: clean lint build
-	@aws s3 cp journey-tracker.min.js.gz s3://cdn.journey-app.io/v1/journey-tracker.min.js --cache-control "public, max-age=7200" --content-encoding "gzip"
+	@aws s3 cp journey-tracker.min.js.gz s3://cdn.journey-app.io/v$(VERSION)/journey-tracker.min.js --cache-control "public, max-age=7200" --content-encoding "gzip"
 
 .PHONY: deploy
