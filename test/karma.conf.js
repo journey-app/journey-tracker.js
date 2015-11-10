@@ -8,6 +8,7 @@ module.exports = function(config){
       'node_modules/jasmine-ajax/lib/mock-ajax.js',
       'node_modules/lodash/index.js',
       'journey-tracker.js',
+      'test/test_helper.js',
       'test/**/*_test.js',
     ],
 
