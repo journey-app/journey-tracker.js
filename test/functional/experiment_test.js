@@ -42,4 +42,18 @@ describe('experiment-groups', function() {
     expect(jtr.userTraits("exp-11")).toBe(assigned);
   });
 
+  it("can specify an group by passing in the third arg", function() {
+    for(var i=0; i<100; i++) {
+      expect(jtr.experimentGroup("exp-11", ["control", "variant"], "variant")).toBe("variant");
+      expect(jtr.userTraits("exp-11")).toBe("variant");
+    }
+  });
+
+  it("can force an group", function() {
+    jtr.experimentGroup("exp-11", ["control", "variant"], "variant")
+    var changedTo = jtr.experimentGroup("exp-11", ["control", "variant"], "control")
+    expect(changedTo).toBe("control")
+    expect(jtr.userTraits("exp-11")).toBe("control");
+  });
+
 });
