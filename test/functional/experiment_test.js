@@ -31,4 +31,15 @@ describe('experiment-groups', function() {
     jtr.identify("bob");
     expect(jtr.userTraits("exp-11")).toBe(assigned);
   });
+
+  it("should keep the same group info when identify already identified", function() {
+    jtr.identify("bob");
+    var assigned = jtr.experimentGroup("exp-11", ["control", "variant"]);
+
+    jtr.identify("johon");
+    jtr.experimentGroup("exp-11", ["control", "variant"]);
+
+    expect(jtr.userTraits("exp-11")).toBe(assigned);
+  });
+
 });
