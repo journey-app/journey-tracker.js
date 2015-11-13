@@ -1,16 +1,26 @@
 describe('userTraits', function() {
   beforeEach(function() {
     jasmine.Ajax.requests.reset();
-    jtr.identify(null);
-    jtr.clearQueue();
+    jtr._clear();
   });
 
   it("can set traits to anonymous user", function() {
     jtr.userTraits({"company_size": "small"});
-    expectIdentifyEventSent(undefined, {"company_size": "small"});
+    expectIdentifyEventSent(null, {"company_size": "small"});
 
     jtr.userTraits({"industry": "it"});
-    expectIdentifyEventSent(undefined, {"company_size": "small", "industry": "it"});
+    expectIdentifyEventSent(null, {"company_size": "small", "industry": "it"});
+  });
+
+  it("can set traits to by name and value format", function() {
+    jtr.userTraits("company_size", "small");
+    expect(jtr.userTraits("company_size")).toBe("small");
+  });
+
+  it("can get single trait value by name", function() {
+    jtr.userTraits({"company_size": "small", "team_size": 32});
+    expect(jtr.userTraits("company_size")).toBe("small");
+    expect(jtr.userTraits("team_size")).toBe(32);
   });
 
   it("can set traits to identified user", function() {
@@ -28,7 +38,7 @@ describe('userTraits', function() {
   it("can merge traits from a anonymous identify call", function() {
     jtr.identify(null, {"industry": "it"});
     jtr.userTraits({"company_size": "small"});
-    expectIdentifyEventSent(undefined, {"company_size": "small", "industry": "it"});
+    expectIdentifyEventSent(null, {"company_size": "small", "industry": "it"});
   });
 
   it("should ignore undefined traits", function() {
@@ -56,6 +66,4 @@ describe('userTraits', function() {
     jtr.userTraits({"company": "acme"});
     expect(eventsSent().length).toBe(3);
   });
-
-
 });

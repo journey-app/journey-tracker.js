@@ -1,7 +1,7 @@
 {
   "name": "journey-tracking.js",
   "author": "Thoughtworks Studios",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "description": "the tracking javascript sending events to journey-app.io",
   "keywords": [
@@ -35,6 +35,8 @@
     "karma-jasmine": "~0.2.0",
     "karma-chrome-launcher": "",
     "karma-phantomjs-launcher": "~0.1",
-    "jasmine-ajax": "^3.2.0"
+    "jasmine-ajax": "^3.2.0",
+    "mocha": "^2.2.1",
+    "chai": "^2.1.1"
   }
 }

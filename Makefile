@@ -1,11 +1,12 @@
 #
 # Binaries.
 #
-VERSION=1.0.0
+VERSION=1.0.1
 ESLINT = node_modules/.bin/eslint
 UGLIFYJS = node_modules/.bin/uglifyjs
 BROWSERIFY = node_modules/.bin/browserify
 KARMA = node_modules/.bin/karma
+MOCHA = node_modules/.bin/mocha
 WATCHIFY = node_modules/.bin/watchify
 
 
@@ -65,17 +66,26 @@ lint: node_modules
 .PHONY: lint
 
 #run karma tests
-test: clean lint build
-	@$(KARMA) start test/karma.conf.js --single-run --no-colors
+functional: clean lint build
+	@$(KARMA) start test/functional/karma.conf.js --single-run --no-colors
+.PHONY: functional
+
+#run karma tests
+unit: lint
+	@$(MOCHA) test/unit/
+.PHONY: unit
+
+test: unit functional
 .PHONY: test
 
-# continue to run test in the background, you may want to run task
+# continue to run karma test in the background, you may want to run task
 # watchify as well to allow journey-tracker.js regenerate on change
-watch-test: clean lint build
-	@$(KARMA) start test/karma.conf.js --no-colors
-.PHONY: watch-test
+watch-functional: clean lint build
+	@$(KARMA) start test/functional/karma.conf.js --no-colors
+.PHONY: watch-functional
 
 # watch code changes and regenerate journey-tracker.js continously
+# useful when debugging code in browser
 watchify: node_modules $(SRC) package.json
 	@$(WATCHIFY) --standalone jtr lib/index.js -o journey-tracker.js
 .PHONY: watchify

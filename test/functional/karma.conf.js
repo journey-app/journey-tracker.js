@@ -5,11 +5,11 @@ module.exports = function(config){
     basePath : '../',
 
     files : [
-      'node_modules/jasmine-ajax/lib/mock-ajax.js',
-      'node_modules/lodash/index.js',
-      'journey-tracker.js',
-      'test/test_helper.js',
-      'test/**/*_test.js',
+      '../node_modules/jasmine-ajax/lib/mock-ajax.js',
+      '../node_modules/lodash/index.js',
+      '../journey-tracker.js',
+      'functional/test_helper.js',
+      'functional/*_test.js',
     ],
 
     autoWatch : true,
@@ -38,9 +38,6 @@ module.exports = function(config){
       }
     },
 
-    junitReporter : {
-      outputFile: 'test_out/unit.xml',
-      suite: 'unit'
-    }
+    reports: ['dots']
   });
 };

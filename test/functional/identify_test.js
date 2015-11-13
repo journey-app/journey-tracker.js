@@ -1,8 +1,7 @@
 describe('identify', function() {
   beforeEach(function() {
     jasmine.Ajax.requests.reset();
-    jtr.identify(null);
-    jtr.clearQueue();
+    jtr._clear();
   });
 
   it("should send out identify event after identify an anonymous user", function() {
@@ -36,6 +35,12 @@ describe('identify', function() {
     expectIdentifyEventSent("someone", {"industry": "IT", "company_size": "small"});
   });
 
+  it("should merge traits from anonymous user", function() {
+    jtr.identify(null, {"company_size": "small"});
+    jtr.identify("dude-b", {"industry": "IT"});
+    expectIdentifyEventSent("dude-b", {"company_size": "small", "industry": "IT"});
+  });
+
   it("should not merge traits from different user", function() {
     jtr.identify("dude-a", {"company_size": "small"});
     jtr.identify("dude-b", {"industry": "IT"});
@@ -66,7 +71,7 @@ describe('identify', function() {
     trackEvent = events.pop(),
     identifyEvent = events.pop();
 
-    expect(trackEvent.uid).toBe(undefined);
+    expect(trackEvent.uid).toBe(null);
     expect(trackEvent.anonymousId).toEqual(originalAnonymousId);
 
     expect(identifyEvent.type).toBe("identify");
