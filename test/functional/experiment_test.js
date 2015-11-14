@@ -56,4 +56,43 @@ describe('experiment-groups', function() {
     expect(jtr.userTraits("exp-11")).toBe("control");
   });
 
+  describe("ui effects", function() {
+    var fixture = '<div id="control-div" analytics-experiment="exp-11" analytics-experiment-group="control"></div>' +
+'<div id="variant-div" analytics-experiment="exp-11" analytics-experiment-group="variant"></div>' +
+'<div id="normal-div"></div>';
+    var control, variant, normal;
+
+    beforeEach(function() {
+      document.body.insertAdjacentHTML(
+        'afterbegin',
+        fixture);
+      control = document.getElementById("control-div");
+      variant = document.getElementById("variant-div");
+      normal = document.getElementById("normal-div");
+    });
+
+    it("should show/hide elements  match/notmatch current group", function() {
+      jtr.experimentGroup("exp-11", ["control", "variant"], "variant");
+      expect(control.style.display).toBe('none');
+      expect(variant.style.display).toBe('block');
+      expect(normal.style.display).toBe('');
+    });
+
+    it("should use display attributes upon show element", function() {
+      control.setAttribute("analytics-experiment-display", "inline");
+      jtr.experimentGroup("exp-11", ["control", "variant"], "control");
+      expect(control.style.display).toBe('inline');
+      expect(variant.style.display).toBe('none');
+    });
+
+    // todo:
+    // it("should use default display style base element tag on showing", function() {
+    //   document.body.insertAdjacentHTML(
+    //     'afterbegin',
+    //     '<span id="span" analytics-experiment="exp-11" analytics-experiment-group="control"></span>')
+    //   jtr.experimentGroup("exp-11", ["control", "variant"], "control");
+    //   expect(document.getElementById('span').style.display).toBe('inline');
+    // });
+
+  });
 });
