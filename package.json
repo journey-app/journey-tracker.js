@@ -1,7 +1,7 @@
 {
   "name": "journey-tracking.js",
   "author": "Thoughtworks Studios",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "license": "MIT",
   "description": "the tracking javascript sending events to journey-app.io",
   "keywords": [

@@ -1,7 +1,7 @@
 #
 # Binaries.
 #
-VERSION=1.0.1
+VERSION=1.0.2
 ESLINT = node_modules/.bin/eslint
 UGLIFYJS = node_modules/.bin/uglifyjs
 BROWSERIFY = node_modules/.bin/browserify
