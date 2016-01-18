@@ -6,7 +6,7 @@ module.exports = function(config){
 
     files : [
       '../node_modules/jasmine-ajax/lib/mock-ajax.js',
-      '../node_modules/lodash/index.js',
+      '../node_modules/lodash/lodash.js',
       '../journey-tracker.js',
       'functional/test_helper.js',
       'functional/*_test.js',
